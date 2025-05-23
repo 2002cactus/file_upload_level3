@@ -15,15 +15,11 @@ if (isset($_FILES["file"])) {
     $error = '';
     $success = '';
     try {
-        $filename = $_FILES["file"]["name"];
-        $filename_lower = strtolower($filename);
-        $parts = explode('.', $filename_lower);
-        $blacklist = ["php", "phtml", "phar"];
-        if (array_intersect($blacklist, $parts)) {
+        $mime_type = $_FILES["file"]["type"];
+        if (!in_array($mime_type, ["image/jpeg", "image/png", "image/gif"])) {
             die("Hack detected");
         }
-
-        $file = $dir . "/" . $filename;
+        $file = $dir . "/" . $_FILES["file"]["name"];
         move_uploaded_file($_FILES["file"]["tmp_name"], $file);
         $success = 'Successfully uploaded file at: <a href="/' . $file . '">/' . $file . ' </a><br>';
         $success .= 'View all uploaded file at: <a href="/' . $dir . '/">/' . $dir . ' </a>';
@@ -53,6 +49,8 @@ if (isset($_FILES["file"])) {
     <br />
     <h3 class="display-4 text-center">File upload workshop</h3>
     <h4 class="display-4 text-center">Level 3</h4>
+    <p class="display-5 text-center">I think I need to check if the uploaded file is truly image or not</p>
+    <p class="display-5 text-center">Goal: RCE me</p>
 
     <br />
     <div class="container">
@@ -69,5 +67,28 @@ if (isset($_FILES["file"])) {
     </div>
 
 </body>
+
+<footer class="container">
+    <br />
+    <br />
+    <br />
+    <button class="float-left btn btn-dark" type="button" onclick="prevLevel()">Previous level</button>
+    <button class="float-right btn btn-dark" type="button" onclick="nextLevel()">Next level</button>
+
+    <script>
+        function prevLevel() {
+            const url = new URL(origin);
+            url.port = (parseInt(url.port) - 1).toString();
+            location.href = url.toString();
+        }
+
+        function nextLevel() {
+            const url = new URL(origin);
+            url.port = (parseInt(url.port) + 1).toString();
+            location.href = url.toString();
+        }
+    </script>
+
+</footer>
 
 </html>
